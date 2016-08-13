@@ -99,23 +99,23 @@
                 <tr><th colspan="3"><h3>Vitamins and Minerals</h3></th></tr>
                 <tr>
                   <td class="tR">Vitamin A</td>
-                  <td colspan="2" id="vitAStat"></td>
+                  <td colspan="2" class="tL" id="vitAStat"></td>
                 </tr>
                 <tr>
                   <td class="tR">Vitamin C</td>
-                  <td colspan="2" id="vitCStat"></td>
+                  <td colspan="2" class="tL" id="vitCStat"></td>
                 </tr>
                 <tr>
                   <td class="tR">Calcium</td>
-                  <td colspan="2" id="calciumStat"></td>
+                  <td colspan="2" class="tL" id="calciumStat"></td>
                 </tr>
                 <tr>
                   <td class="tR">Iron</td>
-                  <td colspan="2" id="ironStat"></td>
+                  <td colspan="2" class="tL" id="ironStat"></td>
                 </tr>
                 <tr>
                   <td class="tR">Sodium</td>
-                  <td colspan="2" id="sodiumStat"></td>
+                  <td colspan="2" class="tL" id="sodiumStat"></td>
                 </tr>
               </table>
             </div>
@@ -168,6 +168,8 @@
   function unfreeze_snap() {
       Webcam.unfreeze()
       $('#returnButton').hide();
+      $('#message').slideUp();
+      $('#nutrition').slideUp();
       $('#snapButton').show();
   }
   function freeze_snap() {
@@ -180,39 +182,30 @@
 
   function requestClarifaiAPI() {
     console.log('requestClarifaiAPI');
-    var imageData = extractImageBase64('image');
 
+    // Get image data from camera capture, extract bytes and sent to clarify
+    var imageData = extractImageBase64('image');
     Clarifai.getTagsByImageBytes(imageData, {
-      'selectClasses': ['food']
+      'selectClasses': ['food', 'healthy', 'unhealthy']
     }).then(function(r) {
-      var obj = r.results[0];
-      if (obj) {
-        var foodRatio = getFoodRatio(obj.result.tag);
+      var tags = r.results[0].result.tag;
+      console.log(tags);
+      if (tags) {
+        // Check if food probability is high
+        var foodRatio = getRatio('food', tags);
+        var healthyRatio = getRatio('healthy', tags);
+        var unhealthyRatio = getRatio('unhealthy', tags);
         console.log('foodRatio:', foodRatio);
 
+        // Check if food probability is > threshold, request properties
         if (foodRatio >= 0.8) {
-          console.log("got food");
           Clarifai.getTagsByImageBytes(imageData, {
             'model': 'food-items-v0.1'
           }).then(function(r) {
-            console.log('response:', r);
-            showMessage('Food found!');
+            showMessage('Item identified!');
+            console.log('properties:', r.results[0].result.tag);
             requestNutritionixAPI(r.results[0].result.tag);
-
-            // TODO: REMOVE!!
-            data = {
-              itemName: 'apple',
-              healthiness: 'Healthy',
-              calStat: '95',
-              fatStat: '0%',
-              proteinStat: '1%',
-              carbStat: '8%',
-              vitAStat: '1%',
-              vitCStat: '14%',
-              calciumStat: '1%',
-              ironStat: '1%',
-              sodiumStat: '0%',
-            };
+;
             showNutritionResults(data);
           }, function(err) {
             console.log(err);
@@ -235,19 +228,19 @@
   }
 
   function showNutritionResults(data) {
-    $('#itemName').text(data.itemName);
+    $('#itemName').text(data.item_name);
     $('#healthiness').text(data.healthiness);
 
     $('#calStat').text(data.calStat);
-    $('#fatStat').text(data.fatStat);
-    $('#proteinStat').text(data.proteinStat);
-    $('#carbStat').text(data.carbStat);
+    $('#fatStat').text(data.nf_total_fat / data.nf_serving_weight_grams);
+    $('#proteinStat').text(data.nf_protein / data.nf_serving_weight_grams);
+    $('#carbStat').text(data.nf_total_carbohydrate / data.nf_serving_weight_grams);
 
-    $('#vitAStat').text(data.vitAStat);
-    $('#vitCStat').text(data.vitCStat);
-    $('#calciumStat').text(data.calciumStat);
-    $('#ironStat').text(data.ironStat);
-    $('#sodiumStat').text(data.sodiumStat);
+    $('#vitAStat').text(data.nf_vitamin_a_dv);
+    $('#vitCStat').text(data.nf_vitamin_c_dv);
+    $('#calciumStat').text(data.nf_calcium_dv);
+    $('#ironStat').text(data.nf_iron_dv);
+    $('#sodiumStat').text(data.nf_sodium / (data.nf_serving_weight_grams * 1000));
 
     $('#nutrition').slideDown();
   }
@@ -261,13 +254,13 @@
     return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
   }
 
-  function getFoodRatio(data) {
-    console.log('getFoodRatio', data);
-    var foodIndex = $.inArray('food', data.classes);
-    if (foodIndex >= 0) {
-      return data.probs[foodIndex];
+  function getRatio(label, tags) {
+    var index = $.inArray(label, tags.classes);
+    if (index >= 0) {
+      return tags.probs[index];
     }
   }
+
 </script>
 
 <script src="scripts/main.js"></script>
