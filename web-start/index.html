@@ -154,6 +154,7 @@
           }).then(function(r) {
             console.log('response:', r);
             showMessage('food found!');
+            requestNutritionixAPI(r.results[0].result.tag);
           }, function(err) {
             console.log(err);
             showMessage(err.status_msg);
@@ -168,6 +169,10 @@
       console.log(err);
       showMessage(err.status_msg);
     });
+  }
+
+  function requestNutritionixAPI(params) {
+    console.log('requestNutritionixAPI', params);
   }
 
   function showMessage(text) {
