@@ -65,38 +65,46 @@
     <main class="mdl-layout__content mdl-color--grey-100">
         <!-- Div align in the middle -->
         <div style="margin-left:auto;margin-right:auto;text-align:center">
-            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;"></div>
+            <div id="my_camera"
+                 style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-              <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
+            <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
                 <img src="images/button/camera.png" height="35"/>
-              </button>
+            </button>
 
-              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())" id="returnButton">
+            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())"
+                    id="returnButton">
                 <img src="images/button/reset.png" height="35"/>
-              </button>
-              <br>
-              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
+            </button>
+            <br>
+            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(switch_device())"
+                    id="switchDeviceButton">
                 <img src="images/button/switchDeviceIcon.png" height="35"/>
-              </button>
-            </div>
-            <div id="message"></div>
-            <div id="nutrition">
-              <h2 id="itemName"></h2>
-              <div id="healthiness"></div>
-              <table id="statTable">
-                <tr><th colspan="3"><h3>Basic</h3></th></tr>
+            </button>
+        </div>
+        <div id="message"></div>
+        <div id="nutrition">
+            <h2 id="itemName"></h2>
+            <div id="healthiness"></div>
+            <table id="statTable">
                 <tr>
-                  <td rowspan="3">
-                    Calories<br>
-                    <span id="calStat"></span>
-                  </td>
-                  <td class="tL">Fats: <span id="fatStat"></span></td>
+                    <th colspan="3"><h3>Basic</h3></th>
                 </tr>
-                <tr><td class="tL">Protein: <span id="proteinStat"></span></td></tr>
-                <tr><td class="tL">Carbs: <span id="carbStat"></span></td></tr>
+                <tr>
+                    <td rowspan="3">
+                        Calories<br>
+                        <span id="calStat"></span>
+                    </td>
+                    <td class="tL">Fats: <span id="fatStat"></span></td>
+                </tr>
+                <tr>
+                    <td class="tL">Protein: <span id="proteinStat"></span></td>
+                </tr>
+                <tr>
+                    <td class="tL">Carbs: <span id="carbStat"></span></td>
+                </tr>
 
-                <tr><th colspan="3"><h3>Vitamins and Minerals</h3></th></tr>
                 <tr>
                   <td class="tR">Vitamin A</td>
                   <td colspan="2" class="tL" id="vitAStat"></td>
@@ -117,10 +125,10 @@
                   <td class="tR">Sodium</td>
                   <td colspan="2" class="tL" id="sodiumStat"></td>
                 </tr>
-              </table>
-            </div>
+            </table>
         </div>
-    </main>
+</div>
+</main>
 </div>
 
 <!-- Firebase -->
@@ -195,6 +203,7 @@
         var foodRatio = getRatio('food', tags);
         var healthyRatio = getRatio('healthy', tags);
         var unhealthyRatio = getRatio('unhealthy', tags);
+        var isHealthy = (unhealthyRatio <= .4 && healthyRatio >= .5);
         console.log('foodRatio:', foodRatio);
 
         // Check if food probability is > threshold, request properties
@@ -204,9 +213,7 @@
           }).then(function(r) {
             showMessage('Item identified!');
             console.log('properties:', r.results[0].result.tag);
-            requestNutritionixAPI(r.results[0].result.tag);
-;
-            showNutritionResults(data);
+            requestNutritionixAPI(r.results[0].result.tag, isHealthy);
           }, function(err) {
             console.log(err);
             showMessage(err.status_msg);
@@ -223,24 +230,44 @@
     });
   }
 
-  function requestNutritionixAPI(params) {
-    console.log('requestNutritionixAPI', params);
+  function requestNutritionixAPI(params, isHealthy) {
+    console.log('requestNutritionixAPI');
+    var url = "https://api.nutritionix.com/v1_1/search/"
+      + encodeURIComponent(params.classes[0]) + "?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+    console.log('request URL:', url);
+
+    // Send request to Nutritionix to get ID, then request again for properties
+    $.get(url, function (data) {
+      console.log('response:', data);
+      var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+      $.get(url_id, function (data_id) {
+        data_id.healthiness = isHealthy;
+        showNutritionResults(data_id);
+      });
+    });
   }
 
   function showNutritionResults(data) {
+    console.log('showNutritionResults:', data);
+
     $('#itemName').text(data.item_name);
-    $('#healthiness').text(data.healthiness);
+    $('#healthiness').text((data.healthiness ? "Healthy" : "Unhealthy"));
+    $('#healthiness').addClass((data.healthiness ? "healthy" : "unhealthy"));
 
-    $('#calStat').text(data.calStat);
-    $('#fatStat').text(data.nf_total_fat / data.nf_serving_weight_grams);
-    $('#proteinStat').text(data.nf_protein / data.nf_serving_weight_grams);
-    $('#carbStat').text(data.nf_total_carbohydrate / data.nf_serving_weight_grams);
+    $('#calStat').text((data.calStat || "---"));
+    $('#fatStat').text((data.nf_serving_weight_grams
+      ? data.nf_total_fat / data.nf_serving_weight_grams : "---"));
+    $('#proteinStat').text((data.nf_serving_weight_grams
+      ? data.nf_protein / data.nf_serving_weight_grams : "---"));
+    $('#carbStat').text((data.nf_serving_weight_grams
+      ? data.nf_total_carbohydrate / data.nf_serving_weight_grams : "---"));
 
-    $('#vitAStat').text(data.nf_vitamin_a_dv);
-    $('#vitCStat').text(data.nf_vitamin_c_dv);
-    $('#calciumStat').text(data.nf_calcium_dv);
-    $('#ironStat').text(data.nf_iron_dv);
-    $('#sodiumStat').text(data.nf_sodium / (data.nf_serving_weight_grams * 1000));
+    $('#vitAStat').text((data.nf_vitamin_a_dv || "---"));
+    $('#vitCStat').text((data.nf_vitamin_c_dv || "---"));
+    $('#calciumStat').text((data.nf_calcium_dv || "---"));
+    $('#ironStat').text((data.nf_iron_dv || "---"));
+    $('#sodiumStat').text((data.nf_serving_weight_grams
+      ? data.nf_sodium / (data.nf_serving_weight_grams * 1000) : "---"));
 
     $('#nutrition').slideDown();
   }
@@ -260,7 +287,6 @@
       return tags.probs[index];
     }
   }
-
 </script>
 
 <script src="scripts/main.js"></script>
