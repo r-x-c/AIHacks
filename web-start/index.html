@@ -73,7 +73,7 @@
     </header>
 
     <main class="mdl-layout__content mdl-color--grey-100">
-        <div id="messages">
+        <div style="text-align: center;">
             <span id="message-filler"></span>
             <div id="my_camera" style="width:320px; height:240px;"></div>
             <!--<div id="my_result"></div> -->
@@ -84,7 +84,7 @@
             <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
                 <img src="images/button/x.png" height="35"/>
             </button>
-        </div>
+            </div>
     </main>
 </div>
 
@@ -107,10 +107,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-1.2.1.js"></script>
 <script>
-  Clarifai.initialize({
-    'clientId': 'PRlKaNkbBueMiHe07q7y_ocRxL3nqhdRgwZ_tNuG',
-    'clientSecret': '-EAD2Gw54Ncbp-c-3FSOJIMlmGOVPUOSiVdIjJRS'
-  });
+    Clarifai.initialize({
+        'clientId': 'PRlKaNkbBueMiHe07q7y_ocRxL3nqhdRgwZ_tNuG',
+        'clientSecret': '-EAD2Gw54Ncbp-c-3FSOJIMlmGOVPUOSiVdIjJRS'
+    });
 </script>
 
 <script src="third_party/webcamjs/webcam.js"></script>
@@ -124,21 +124,20 @@
             requestClarifaiAPI();
         });
     }
-    function unfreeze_snap(){
+    function unfreeze_snap() {
         Webcam.unfreeze()
     }
 
-    function requestClarifaiAPI()
-    {
-      console.log('requestClarifaiAPI');
-      var imageData = extractImageBase64('image');
+    function requestClarifaiAPI() {
+        console.log('requestClarifaiAPI');
+        var imageData = extractImageBase64('image');
 
-      console.log('calling clarifai with image data:', imageData);
-      Clarifai.getTagsByImageBytes(imageData).then(function(r) {
-        console.log('response',r);
-      }, function(err) {
-        console.log(err);
-      });
+        console.log('calling clarifai with image data:', imageData);
+        Clarifai.getTagsByImageBytes(imageData).then(function (r) {
+            console.log('response', r);
+        }, function (err) {
+            console.log(err);
+        });
     }
 
     function extractImageBase64(id) {
