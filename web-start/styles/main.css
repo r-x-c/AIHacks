@@ -226,7 +226,7 @@ main, #messages-card {
   vertical-align: middle;
 }
 #nutrition #itemName {
-  font-size: 12pt;
+  font-family: Georgia;
   color: #666;
 }
 #nutrition #healthiness {
@@ -241,6 +241,17 @@ main, #messages-card {
 #nutrition #statTable {
   width: 100%;
 }
-#nutrition .tR {
+#statTable th {
+  text-align: left;
+}
+#statTable td {
+  font-size: 12pt;
+  font-weight: bold;
+}
+#statTable h3 {
+  font-size: 16pt;
+  line-height: 1em;
+}
+#statTable .tR {
   text-align: right;
 }
