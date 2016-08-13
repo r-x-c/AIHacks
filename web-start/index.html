@@ -68,18 +68,20 @@
             <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-              <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
+              <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
                 <img src="images/button/camera.png" height="35"/>
               </button>
 
-              <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
-                <img src="images/button/x.png" height="35"/>
+              <button style="height:50px;width:50px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())" id="returnButton">
+                <img src="images/button/reset.png" height="35"/>
               </button>
 
               <button style="height:50px;width:50px" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
                 <img src="images/button/switchDeviceIcon.png" height="35"/>
               </button>
             </div>
+            <div id="message"></div>
+
         </div>
     </main>
 </div>
@@ -122,10 +124,14 @@
 
           requestClarifaiAPI();
       });
-      freeze_snap()
+      freeze_snap();
+      $('#snapButton').hide();
+      $('#returnButton').show();
   }
   function unfreeze_snap() {
       Webcam.unfreeze()
+      $('#returnButton').hide();
+      $('#snapButton').show();
   }
   function freeze_snap() {
       Webcam.freeze()
@@ -177,7 +183,7 @@
 
   function showMessage(text) {
     console.log(text);
-    alert(text);
+    $('#message').html('').append($(document.createElement('p')).text(text)).slideDown();
   }
 
   function extractImageBase64(id) {

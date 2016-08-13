@@ -200,3 +200,19 @@ main, #messages-card {
   margin-right: 5px;
 }
 
+
+
+#message {
+  display: none;
+  margin: 8px;
+  padding: 8px;
+  border: #AAAA66;
+  background: #EEFFBB;
+  font-weight: bold;
+  color: #222;
+  font-size: 9pt;
+  vertical-align: middle;
+}
+#message p {
+  margin: 0;
+}
