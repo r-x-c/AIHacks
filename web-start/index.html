@@ -65,62 +65,73 @@
     <main class="mdl-layout__content mdl-color--grey-100">
         <!-- Div align in the middle -->
         <div style="margin-left:auto;margin-right:auto;text-align:center">
-            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;"></div>
+            <div id="my_camera"
+                 style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-              <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
+            <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
                 <img src="images/button/camera.png" height="35"/>
-              </button>
+            </button>
 
-              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())" id="returnButton">
+            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())"
+                    id="returnButton">
                 <img src="images/button/reset.png" height="35"/>
-              </button>
-              <br>
-              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
+            </button>
+            <br>
+            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(switch_device())"
+                    id="switchDeviceButton">
                 <img src="images/button/switchDeviceIcon.png" height="35"/>
-              </button>
-            </div>
-            <div id="message"></div>
-            <div id="nutrition">
-              <h2 id="itemName"></h2>
-              <div id="healthiness"></div>
-              <table id="statTable">
-                <tr><th colspan="3"><h3>Basic</h3></th></tr>
-                <tr>
-                  <td rowspan="3">
-                    Calories<br>
-                    <span id="calStat"></span>
-                  </td>
-                  <td class="tL">Fats: <span id="fatStat"></span></td>
-                </tr>
-                <tr><td class="tL">Protein: <span id="proteinStat"></span></td></tr>
-                <tr><td class="tL">Carbs: <span id="carbStat"></span></td></tr>
-
-                <tr><th colspan="3"><h3>Vitamins and Minerals</h3></th></tr>
-                <tr>
-                  <td class="tR">Vitamin A</td>
-                  <td colspan="2" id="vitAStat"></td>
-                </tr>
-                <tr>
-                  <td class="tR">Vitamin C</td>
-                  <td colspan="2" id="vitCStat"></td>
-                </tr>
-                <tr>
-                  <td class="tR">Calcium</td>
-                  <td colspan="2" id="calciumStat"></td>
-                </tr>
-                <tr>
-                  <td class="tR">Iron</td>
-                  <td colspan="2" id="ironStat"></td>
-                </tr>
-                <tr>
-                  <td class="tR">Sodium</td>
-                  <td colspan="2" id="sodiumStat"></td>
-                </tr>
-              </table>
-            </div>
+            </button>
         </div>
-    </main>
+        <div id="message"></div>
+        <div id="nutrition">
+            <h2 id="itemName"></h2>
+            <div id="healthiness"></div>
+            <table id="statTable">
+                <tr>
+                    <th colspan="3"><h3>Basic</h3></th>
+                </tr>
+                <tr>
+                    <td rowspan="3">
+                        Calories<br>
+                        <span id="calStat"></span>
+                    </td>
+                    <td class="tL">Fats: <span id="fatStat"></span></td>
+                </tr>
+                <tr>
+                    <td class="tL">Protein: <span id="proteinStat"></span></td>
+                </tr>
+                <tr>
+                    <td class="tL">Carbs: <span id="carbStat"></span></td>
+                </tr>
+
+                <tr>
+                    <th colspan="3"><h3>Vitamins and Minerals</h3></th>
+                </tr>
+                <tr>
+                    <td class="tR">Vitamin A</td>
+                    <td colspan="2" id="vitAStat"></td>
+                </tr>
+                <tr>
+                    <td class="tR">Vitamin C</td>
+                    <td colspan="2" id="vitCStat"></td>
+                </tr>
+                <tr>
+                    <td class="tR">Calcium</td>
+                    <td colspan="2" id="calciumStat"></td>
+                </tr>
+                <tr>
+                    <td class="tR">Iron</td>
+                    <td colspan="2" id="ironStat"></td>
+                </tr>
+                <tr>
+                    <td class="tR">Sodium</td>
+                    <td colspan="2" id="sodiumStat"></td>
+                </tr>
+            </table>
+        </div>
+</div>
+</main>
 </div>
 
 <!-- Firebase -->
@@ -150,124 +161,146 @@
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
-  var deviceIndex = 0;
-  Webcam.attach('#my_camera');
-  if (Webcam.numDevices() > 1) {
-    $('#switchDeviceButton').show();
-  }
-  function take_snapshot() {
-      Webcam.snap(function (data_uri) {
-          document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
+    var deviceIndex = 0;
+    Webcam.attach('#my_camera');
+    if (Webcam.numDevices() > 1) {
+        $('#switchDeviceButton').show();
+    }
+    function take_snapshot() {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
 
-          requestClarifaiAPI();
-      });
-      freeze_snap();
-      $('#snapButton').hide();
-      $('#returnButton').show();
-  }
-  function unfreeze_snap() {
-      Webcam.unfreeze()
-      $('#returnButton').hide();
-      $('#snapButton').show();
-  }
-  function freeze_snap() {
-      Webcam.freeze()
-  }
-  function switch_device() {
-    deviceIndex = ++deviceIndex % Webcam.numDevices();
-    Webcam.setDeviceIndex(deviceIndex);
-  }
+            requestClarifaiAPI();
+        });
+        freeze_snap();
+        $('#snapButton').hide();
+        $('#returnButton').show();
+    }
+    function unfreeze_snap() {
+        Webcam.unfreeze()
+        $('#returnButton').hide();
+        $('#snapButton').show();
+    }
+    function freeze_snap() {
+        Webcam.freeze()
+    }
+    function switch_device() {
+        deviceIndex = ++deviceIndex % Webcam.numDevices();
+        Webcam.setDeviceIndex(deviceIndex);
+    }
 
-  function requestClarifaiAPI() {
-    console.log('requestClarifaiAPI');
-    var imageData = extractImageBase64('image');
+    function requestClarifaiAPI() {
+        console.log('requestClarifaiAPI');
+        var imageData = extractImageBase64('image');
 
-    Clarifai.getTagsByImageBytes(imageData, {
-      'selectClasses': ['food']
-    }).then(function(r) {
-      var obj = r.results[0];
-      if (obj) {
-        var foodRatio = getFoodRatio(obj.result.tag);
-        console.log('foodRatio:', foodRatio);
+        Clarifai.getTagsByImageBytes(imageData, {
+            'selectClasses': ['food']
+        }).then(function (r) {
+            var obj = r.results[0];
+            if (obj) {
+                var foodRatio = getFoodRatio(obj.result.tag);
+                console.log('foodRatio:', foodRatio);
 
-        if (foodRatio >= 0.8) {
-          console.log("got food");
-          Clarifai.getTagsByImageBytes(imageData, {
-            'model': 'food-items-v0.1'
-          }).then(function(r) {
-            console.log('response:', r);
-            showMessage('Food found!');
-            requestNutritionixAPI(r.results[0].result.tag);
+                if (foodRatio >= 0.8) {
+                    console.log("got food");
+                    Clarifai.getTagsByImageBytes(imageData, {
+                        'model': 'food-items-v0.1'
+                    }).then(function (r) {
+                        console.log('response:', r);
+                        showMessage('Food found!');
+                        requestNutritionixAPI(r.results[0].result.tag);
 
-            // TODO: REMOVE!!
-            data = {
-              itemName: 'apple',
-              healthiness: 'Healthy',
-              calStat: '95',
-              fatStat: '0%',
-              proteinStat: '1%',
-              carbStat: '8%',
-              vitAStat: '1%',
-              vitCStat: '14%',
-              calciumStat: '1%',
-              ironStat: '1%',
-              sodiumStat: '0%',
-            };
-            showNutritionResults(data);
-          }, function(err) {
+                        // TODO: REMOVE!!
+                        data = {
+                            itemName: 'apple',
+                            healthiness: 'Healthy',
+                            calStat: '95',
+                            fatStat: '0%',
+                            proteinStat: '1%',
+                            carbStat: '8%',
+                            vitAStat: '1%',
+                            vitCStat: '14%',
+                            calciumStat: '1%',
+                            ironStat: '1%',
+                            sodiumStat: '0%',
+                        };
+                        showNutritionResults(data);
+                    }, function (err) {
+                        console.log(err);
+                        showMessage(err.status_msg);
+                    });
+                } else {
+                    showMessage('No food detected. Please retake picture!');
+                }
+            } else {
+                showMessage('Clarifai returned nothing :(');
+            }
+        }, function (err) {
             console.log(err);
             showMessage(err.status_msg);
-          });
-        } else {
-          showMessage('No food detected. Please retake picture!');
-        }
-      } else {
-        showMessage('Clarifai returned nothing :(');
-      }
-    }, function(err) {
-      console.log(err);
-      showMessage(err.status_msg);
-    });
-  }
-
-  function requestNutritionixAPI(params) {
-    console.log('requestNutritionixAPI', params);
-  }
-
-  function showNutritionResults(data) {
-    $('#itemName').text(data.itemName);
-    $('#healthiness').text(data.healthiness);
-
-    $('#calStat').text(data.calStat);
-    $('#fatStat').text(data.fatStat);
-    $('#proteinStat').text(data.proteinStat);
-    $('#carbStat').text(data.carbStat);
-
-    $('#vitAStat').text(data.vitAStat);
-    $('#vitCStat').text(data.vitCStat);
-    $('#calciumStat').text(data.calciumStat);
-    $('#ironStat').text(data.ironStat);
-    $('#sodiumStat').text(data.sodiumStat);
-
-    $('#nutrition').slideDown();
-  }
-
-  function showMessage(text) {
-    console.log(text);
-    $('#message').html('').append($(document.createElement('p')).text(text)).slideDown();
-  }
-
-  function extractImageBase64(id) {
-    return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
-  }
-
-  function getFoodRatio(data) {
-    console.log('getFoodRatio', data);
-    var foodIndex = $.inArray('food', data.classes);
-    if (foodIndex >= 0) {
-      return data.probs[foodIndex];
+        });
     }
-  }
+
+    function requestNutritionixAPI(params) {
+
+        var url = "https://api.nutritionix.com/v1_1/search/big%20mac?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+
+        $.get(url, function (data) {
+            console.log(data['hits'][0]['_id']);
+            url_id = "https://api.nutritionix.com/v1_1/item?id=513fc9cd673c4fbc26006c3e&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+
+            $.get(url_id, function (data_id) {
+//                console.log(data_id)
+                console.log('DEBUG LINE 254')
+
+                console.log(data_id['nf_calories'])
+                console.log(data_id['nf_calories_from_fat'])
+                console.log(data_id['nf_cholesterol'])
+                console.log(data_id['nf_sodium'])
+                console.log(data_id['nf_protein'])
+                console.log(data_id['nf_total_carbohydrate'])
+                console.log(data_id['nf_total_fat'])
+
+            });
+            console.log('DEBUG LINE X')
+        });
+
+    }
+
+    function showNutritionResults(data) {
+        $('#itemName').text(data.itemName);
+        $('#healthiness').text(data.healthiness);
+
+        $('#calStat').text(data.calStat);
+        $('#fatStat').text(data.fatStat);
+        $('#proteinStat').text(data.proteinStat);
+        $('#carbStat').text(data.carbStat);
+
+        $('#vitAStat').text(data.vitAStat);
+        $('#vitCStat').text(data.vitCStat);
+        $('#calciumStat').text(data.calciumStat);
+        $('#ironStat').text(data.ironStat);
+        $('#sodiumStat').text(data.sodiumStat);
+
+        $('#nutrition').slideDown();
+    }
+
+    function showMessage(text) {
+        console.log(text);
+        $('#message').html('').append($(document.createElement('p')).text(text)).slideDown();
+    }
+
+    function extractImageBase64(id) {
+        return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
+    }
+
+    function getFoodRatio(data) {
+        console.log('getFoodRatio', data);
+        var foodIndex = $.inArray('food', data.classes);
+        if (foodIndex >= 0) {
+            return data.probs[foodIndex];
+        }
+    }
 </script>
 
 <script src="scripts/main.js"></script>
