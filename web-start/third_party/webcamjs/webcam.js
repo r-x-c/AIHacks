@@ -222,6 +222,8 @@ var Webcam = {
 			}
 			if (deviceID) {
 				this.params.constraints.optional = [{sourceId: deviceID}];
+			} else if (_devices) {
+				this.params.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
 			}
 			this.mediaDevices.getUserMedia({
 				"audio": false,

@@ -167,6 +167,7 @@
 <script language="JavaScript">
     var deviceIndex = 0;
     Webcam.attach('#my_camera');
+    console.log("num devices:", Webcam.numDevices());
     if (Webcam.numDevices() > 1) {
         $('#switchDeviceButton').show();
     }
@@ -214,7 +215,7 @@
         var foodRatio = getRatio('food', tags);
         var healthyRatio = getRatio('healthy', tags);
         var unhealthyRatio = getRatio('unhealthy', tags);
-        var isHealthy = (healthyRatio / unhealthyRatio >= 2);
+        var isHealthy = (healthyRatio / unhealthyRatio >= 2.5);
         console.log('foodRatio:', foodRatio);
 
                 // Check if food probability is > threshold, request properties
