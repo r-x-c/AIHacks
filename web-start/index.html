@@ -105,6 +105,13 @@
     firebase.initializeApp(config);
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-1.2.1.js"></script>
+<script>
+  Clarifai.initialize({
+    'clientId': 'PRlKaNkbBueMiHe07q7y_ocRxL3nqhdRgwZ_tNuG',
+    'clientSecret': '-EAD2Gw54Ncbp-c-3FSOJIMlmGOVPUOSiVdIjJRS'
+  });
+</script>
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
@@ -121,22 +128,17 @@
         Webcam.unfreeze()
     }
 
-    function requestClarifaiAPI() {
-        console.log('requestClarifaiAPI');
-        var imageData = extractImageBase64('image');
-        console.log('imageData', imageData);
+    function requestClarifaiAPI()
+    {
+      console.log('requestClarifaiAPI');
+      var imageData = extractImageBase64('image');
 
-        $.get("https://api.clarifai.com/v1/tag/", {
-            'inputs': [
-                {
-                    'image': {
-                        'base64': imageData
-                    }
-                }
-            ]
-        }, function (data, status) {
-            console.log(status, data);
-        });
+      console.log('calling clarifai with image data:', imageData);
+      Clarifai.getTagsByImageBytes(imageData).then(function(r) {
+        console.log('response',r);
+      }, function(err) {
+        console.log(err);
+      });
     }
 
     function extractImageBase64(id) {

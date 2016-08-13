@@ -34,7 +34,6 @@ function Shapa() {
   this.signInSnackbar = document.getElementById('must-signin-snackbar');
 
   // Saves message on form submit.
-  this.messageForm.addEventListener('submit', this.saveMessage.bind(this));
   this.signOutButton.addEventListener('click', this.signOut.bind(this));
   this.signInButton.addEventListener('click', this.signIn.bind(this));
 
