@@ -79,6 +79,9 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <div id="messages">
             <span id="message-filler"></span>
+            <div id="my_camera" style="width:320px; height:240px;"></div>
+            <div id="my_result"></div>
+            <a href="javascript:void(take_snapshot())">Take Snapshot</a>
           </div>
           <form id="message-form" action="#">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -122,6 +125,16 @@
     storageBucket: "smarket-100f5.appspot.com",
   };
   firebase.initializeApp(config);
+</script>
+
+<script src="webcam.js"></script>
+<script language="JavaScript">
+Webcam.attach( '#my_camera' );
+function take_snapshot() {
+  Webcam.snap( function(data_uri) {
+    document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+  } );
+}
 </script>
 
 
