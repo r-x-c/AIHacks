@@ -68,15 +68,15 @@
             <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;margin-bottom:16px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-              <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
+              <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
                 <img src="images/button/camera.png" height="35"/>
               </button>
 
-              <button style="height:50px;width:50px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())" id="returnButton">
+              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())" id="returnButton">
                 <img src="images/button/reset.png" height="35"/>
               </button>
-
-              <button style="height:50px;width:50px" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
+              <br>
+              <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
                 <img src="images/button/switchDeviceIcon.png" height="35"/>
               </button>
             </div>
@@ -115,8 +115,8 @@
 <script language="JavaScript">
   var deviceIndex = 0;
   Webcam.attach('#my_camera');
-  if (Webcam.numDevices() <= 1) {
-    $('#switchDeviceButton').hide();
+  if (Webcam.numDevices() > 1) {
+    $('#switchDeviceButton').show();
   }
   function take_snapshot() {
       Webcam.snap(function (data_uri) {
