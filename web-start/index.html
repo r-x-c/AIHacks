@@ -286,10 +286,10 @@
         $('#carbStat').text((data.nf_serving_weight_grams
                 ? format_r_p(data.nf_total_carbohydrate / data.nf_serving_weight_grams)
                 : "---"));
-        $('#vitAStat').text((data.nf_vitamin_a_dv || "---"));
-        $('#vitCStat').text((data.nf_vitamin_c_dv || "---"));
-        $('#calciumStat').text((data.nf_calcium_dv || "---"));
-        $('#ironStat').text((data.nf_iron_dv || "---"));
+        $('#vitAStat').text(format_r_p(data.nf_vitamin_a_dv || "---"));
+        $('#vitCStat').text(format_r_p(data.nf_vitamin_c_dv || "---"));
+        $('#calciumStat').text(format_r_p(data.nf_calcium_dv || "---"));
+        $('#ironStat').text(format_r_p(data.nf_iron_dv || "---"));
         $('#sodiumStat').text((data.nf_serving_weight_grams
                 ? format_r_p(data.nf_sodium / (data.nf_serving_weight_grams * 1000))
                 : "---"));
