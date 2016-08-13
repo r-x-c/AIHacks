@@ -1,4 +1,1 @@
-clarifai==2.0.0a3
 pkg-resources==0.0.0
-requests==2.11.0
-six==1.10.0
