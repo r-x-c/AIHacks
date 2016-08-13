@@ -73,19 +73,19 @@
     </header>
 
     <main class="mdl-layout__content mdl-color--grey-100">
-        <div id="messages">
+        <div style="text-align: center;">
             <span id="message-filler"></span>
             <div id="my_camera" style="width:320px; height:240px;"></div>
-            <div id="my_result"></div>
+            <!--<div id="my_result"></div> -->
             <div class="container"/>
             <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
                 <img src="images/button/camera.png" height="35"/>
             </button>
-            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
+            <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
                 <img src="images/button/x.png" height="35"/>
             </button>
-        </div>
-</main>
+            </div>
+    </main>
 </div>
 
 <!-- Firebase -->
@@ -107,25 +107,28 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-1.2.1.js"></script>
 <script>
-  Clarifai.initialize({
-    'clientId': 'PRlKaNkbBueMiHe07q7y_ocRxL3nqhdRgwZ_tNuG',
-    'clientSecret': '-EAD2Gw54Ncbp-c-3FSOJIMlmGOVPUOSiVdIjJRS'
-  });
+    Clarifai.initialize({
+        'clientId': 'PRlKaNkbBueMiHe07q7y_ocRxL3nqhdRgwZ_tNuG',
+        'clientSecret': '-EAD2Gw54Ncbp-c-3FSOJIMlmGOVPUOSiVdIjJRS'
+    });
 </script>
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
     Webcam.attach('#my_camera');
     function take_snapshot() {
+        Webcam.freeze()
         Webcam.snap(function (data_uri) {
             document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
 
             requestClarifaiAPI();
         });
     }
+    function unfreeze_snap() {
+        Webcam.unfreeze()
+    }
 
-    function requestClarifaiAPI()
-    {
+    function requestClarifaiAPI() {
       console.log('requestClarifaiAPI');
       var imageData = extractImageBase64('image');
 
