@@ -131,8 +131,7 @@
 
       console.log('calling clarifai with image data:', imageData);
       Clarifai.getTagsByImageBytes(imageData).then(function(r) {
-        console.log('response');
-        console.log(r.outputs[0].concept_predictions[0].probability);
+        console.log('response',r);
       }, function(err) {
         console.log(err);
       });
