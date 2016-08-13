@@ -196,6 +196,21 @@
             console.log('response:', r);
             showMessage('Food found!');
             requestNutritionixAPI(r.results[0].result.tag);
+
+            // TODO: REMOVE!!
+            data = {
+              healthiness: 'Healthy',
+              calStat: '95',
+              fatStat: '0%',
+              proteinStat: '1%',
+              carbStat: '8%',
+              vitAStat: '1%',
+              vitCStat: '14%',
+              calciumStat: '1%',
+              ironStat: '1%',
+              sodiumStat: '0%',
+            };
+            showNutritionResults(data);
           }, function(err) {
             console.log(err);
             showMessage(err.status_msg);
@@ -218,6 +233,18 @@
 
   function showNutritionResults(data) {
 
+    $('#healthiness').text(data.healthiness);
+
+    $('#calStat').text(data.calStat);
+    $('#fatStat').text(data.fatStat);
+    $('#proteinStat').text(data.proteinStat);
+    $('#carbStat').text(data.carbStat);
+
+    $('#vitAStat').text(data.vitAStat);
+    $('#vitCStat').text(data.vitCStat);
+    $('#calciumStat').text(data.calciumStat);
+    $('#ironStat').text(data.ironStat);
+    $('#sodiumStat').text(data.sodiumStat);
   }
 
   function showMessage(text) {
