@@ -222,7 +222,22 @@ var Webcam = {
 			}
 			if (deviceID) {
 				this.params.constraints.optional = [{sourceId: deviceID}];
-			} else if (_devices) {
+			} else {
+				if (!_devices) {
+					navigator.mediaDevices.enumerateDevices().then(function(devices) {
+						var videoDevices = [];
+						devices.forEach(function(device) {
+							if (device.kind == "videoinput") {
+								videoDevices.push(device);
+								alert(device.kind + ": " + device.label + " id = " + device.deviceId);
+							}
+							_devices = videoDevices;
+						});
+					})
+					.catch(function(err) {
+						console.log(err.name + ": " + error.message);
+					});
+				}
 				this.params.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
 			}
 			this.mediaDevices.getUserMedia({
