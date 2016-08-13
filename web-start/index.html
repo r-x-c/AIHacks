@@ -59,35 +59,35 @@
             <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
                 <h3><i class="material-icons">chat_bubble_outline</i> Shapa </h3>
             </div>
-            <div id="user-container">
-                <div hidden id="user-pic"></div>
-                <div hidden id="user-name"></div>
-                <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-                    Sign-out
-                </button>
-                <button hidden id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-                    <i class="material-icons">account_circle</i>Sign-in with Google
-                </button>
-            </div>
         </div>
     </header>
 
     <main class="mdl-layout__content mdl-color--grey-100">
-        <div style="text-align: center;">
-            <span id="message-filler"></span>
-            <div id="my_camera" style="width:320px; height:240px;"></div>
+        <!-- Div align in the middle -->
+        <div style="margin-left:auto;margin-right:auto;text-align:center">
+            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;"></div>
             <div id="my_result" style="display: none;"></div>
+<<<<<<< HEAD
             <div class="container"/>
               <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
+=======
+            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())"
+                    onclick="javascript:void(freeze_snap())">
+>>>>>>> 7b5f5f862e257385b16b9a746e5c104d168aee72
                 <img src="images/button/camera.png" height="35"/>
               </button>
               <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
                 <img src="images/button/x.png" height="35"/>
+<<<<<<< HEAD
               </button>
               <button style="height:50px;width:50px" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
                 <img src="images/button/switchDeviceIcon.png" height="35"/>
               </button>
             </div>
+=======
+            </button>
+        </div>
+>>>>>>> 7b5f5f862e257385b16b9a746e5c104d168aee72
     </main>
 </div>
 
@@ -124,14 +124,18 @@
     $('#switchDeviceButton').hide();
   }
   function take_snapshot() {
-    Webcam.snap(function (data_uri) {
-      document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
-      
-      requestClarifaiAPI();
-    });
+      Webcam.snap(function (data_uri) {
+          document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
+
+          requestClarifaiAPI();
+      });
+      freeze_snap()
   }
   function unfreeze_snap() {
-    Webcam.unfreeze()
+      Webcam.unfreeze()
+  }
+  function freeze_snap() {
+      Webcam.freeze()
   }
   function switch_device() {
     deviceIndex = ++deviceIndex % Webcam.numDevices();
