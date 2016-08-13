@@ -242,6 +242,7 @@
       var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
       $.get(url_id, function (data_id) {
         data_id.healthiness = isHealthy;
+        data_id.item_name = params.classes[0];
         showNutritionResults(data_id);
       });
     });
@@ -256,18 +257,22 @@
 
     $('#calStat').text((data.calStat || "---"));
     $('#fatStat').text((data.nf_serving_weight_grams
-      ? data.nf_total_fat / data.nf_serving_weight_grams * 100 : "---"));
+      ? (data.nf_total_fat / data.nf_serving_weight_grams * 100).toFixed(2)
+      : "---"));
     $('#proteinStat').text((data.nf_serving_weight_grams
-      ? data.nf_protein / data.nf_serving_weight_grams * 100 : "---"));
+      ? (data.nf_protein / data.nf_serving_weight_grams * 100).toFixed(2)
+      : "---"));
     $('#carbStat').text((data.nf_serving_weight_grams
-      ? data.nf_total_carbohydrate / data.nf_serving_weight_grams * 100 : "---"));
+      ? (data.nf_total_carbohydrate / data.nf_serving_weight_grams * 100).toFixed(2)
+      : "---"));
 
     $('#vitAStat').text((data.nf_vitamin_a_dv || "---"));
     $('#vitCStat').text((data.nf_vitamin_c_dv || "---"));
     $('#calciumStat').text((data.nf_calcium_dv || "---"));
     $('#ironStat').text((data.nf_iron_dv || "---"));
     $('#sodiumStat').text((data.nf_serving_weight_grams
-      ? data.nf_sodium / (data.nf_serving_weight_grams * 1000) * 100 : "---"));
+      ? (data.nf_sodium / (data.nf_serving_weight_grams * 1000) * 100).toFixed(2)
+      : "---"));
 
     $('#nutrition').slideDown();
   }
