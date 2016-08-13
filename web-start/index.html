@@ -148,20 +148,26 @@
               'model': 'food-items-v0.1'
             }).then(function(r) {
               console.log('response:', r);
+              showMessage('food found!');
             }, function(err) {
               console.log(err);
-              alert(err.status_msg);
+              showMessage(err.status_msg);
             });
           } else {
-            alert('take a better picture!');
+            showMessage('take a better picture!');
           }
         } else {
-          alert('Clarifai returned nothing :(');
+          showMessage('Clarifai returned nothing :(');
         }
       }, function(err) {
         console.log(err);
-        alert(err.status_msg);
+        showMessage(err.status_msg);
       });
+    }
+
+    function showMessage(text) {
+      console.log(text);
+      alert(text);
     }
 
     function extractImageBase64(id) {
