@@ -82,37 +82,39 @@
             </div>
             <div id="message"></div>
             <div id="nutrition">
-              <h2 id="title"></h2>
+              <h2 id="itemName"></h2>
               <div id="healthiness"></div>
-              <table>
+              <table id="statTable">
                 <tr><th>Basic</th></tr>
                 <tr>
-                  <td rowspan="3">Calories</td>
-                  <td rowspan="3" id="calStat"></td>
-                  <td>Fat</td><td id="fatStat"></td>
+                  <td rowspan="3">
+                    Calories<br>
+                    <span id="calStat"></span>
+                  </td>
+                  <td>Fats: <span id="fatStat"></span></td>
                 </tr>
-                <tr><td>Protein</td><td id="proteinStat"></tr>
-                <tr><td>Carbs</td><td id="carbStat"></tr>
+                <tr><td>Protein: <span id="proteinStat"></span></td></tr>
+                <tr><td>Carbs: <span id="carbStat"></span></td></tr>
 
-                <tr><th>Other</th></tr>
+                <tr><th>Vitamins and Minerals</th></tr>
                 <tr>
-                  <td colspan="2">Vitamin A</td>
+                  <td class="tR">Vitamin A</td>
                   <td colspan="2" id="vitAStat"></td>
                 </tr>
                 <tr>
-                  <td colspan="2">Vitamin C</td>
+                  <td class="tR">Vitamin C</td>
                   <td colspan="2" id="vitCStat"></td>
                 </tr>
                 <tr>
-                  <td colspan="2">Calcium</td>
+                  <td class="tR">Calcium</td>
                   <td colspan="2" id="calcumStat"></td>
                 </tr>
                 <tr>
-                  <td colspan="2">Iron</td>
+                  <td class="tR">Iron</td>
                   <td colspan="2" id="ironStat"></td>
                 </tr>
                 <tr>
-                  <td colspan="2">Sodium</td>
+                  <td class="tR">Sodium</td>
                   <td colspan="2" id="sodiumStat"></td>
                 </tr>
               </table>
@@ -199,6 +201,7 @@
 
             // TODO: REMOVE!!
             data = {
+              itemName: 'apple',
               healthiness: 'Healthy',
               calStat: '95',
               fatStat: '0%',
@@ -232,7 +235,7 @@
   }
 
   function showNutritionResults(data) {
-
+    $('#itemName').text(data.itemName);
     $('#healthiness').text(data.healthiness);
 
     $('#calStat').text(data.calStat);
@@ -245,6 +248,8 @@
     $('#calciumStat').text(data.calciumStat);
     $('#ironStat').text(data.ironStat);
     $('#sodiumStat').text(data.sodiumStat);
+
+    $('#nutrition').slideDown();
   }
 
   function showMessage(text) {

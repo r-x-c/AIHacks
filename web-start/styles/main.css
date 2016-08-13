@@ -197,8 +197,7 @@ main, #messages-card {
   margin-right: 5px;
 }
 
-
-
+/* THIS IS FOR REAL */
 #message {
   display: none;
   margin: 8px auto;
@@ -216,6 +215,7 @@ main, #messages-card {
 }
 
 #nutrition {
+  display: none;
   margin: 8px auto;
   width: 90%;
   padding: 8px;
@@ -225,12 +225,22 @@ main, #messages-card {
   font-size: 9pt;
   vertical-align: middle;
 }
+#nutrition #itemName {
+  font-size: 12pt;
+  color: #666;
+}
 #nutrition #healthiness {
-  padding: 8px;
+  padding: 16px 8px;
   border: #262;
   background: #cFc;
   font-weight: bold;
   color: #222;
-  font-size: 9pt;
+  font-size: 20pt;
   vertical-align: middle;
+}
+#nutrition #statTable {
+  width: 100%;
+}
+#nutrition .tR {
+  text-align: right;
 }
