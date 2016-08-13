@@ -238,7 +238,7 @@ var Webcam = {
 								// alert(device.kind + ": " + device.label + " id = " + device.deviceId);
 							}
 							_devices = videoDevices;
-							thisParams.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
+							thisParams.constraints.optional = [{sourceId: _devices[_devices.length-1].deviceId}];
 							console.log('_devices:', _devices);
 						});
 					})
@@ -246,10 +246,11 @@ var Webcam = {
 						console.log(err.name + ": " + err.message);
 					});
 				} else {
-					this.params.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
+					this.params.constraints.optional = [{sourceId: _devices[_devices.length-1].deviceId}];
 					console.log('_devices:', _devices);
 				}
 			}
+
 			this.mediaDevices.getUserMedia({
 				"audio": false,
 				"video": this.params.constraints
