@@ -78,7 +78,7 @@
             <div id="my_camera" style="width:320px; height:240px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
+            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())" onclick="javascript:void(freeze_snap())">
                 <img src="images/button/camera.png" height="35"/>
             </button>
             <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
@@ -125,6 +125,9 @@
     }
     function unfreeze_snap() {
         Webcam.unfreeze()
+    }
+    function freeze_snap(){
+        Webcam.freeze()
     }
 
     function requestClarifaiAPI() {
