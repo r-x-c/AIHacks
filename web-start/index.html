@@ -59,32 +59,23 @@
             <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
                 <h3><i class="material-icons">chat_bubble_outline</i> Shapa </h3>
             </div>
-            <div id="user-container">
-                <div hidden id="user-pic"></div>
-                <div hidden id="user-name"></div>
-                <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-                    Sign-out
-                </button>
-                <button hidden id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-                    <i class="material-icons">account_circle</i>Sign-in with Google
-                </button>
-            </div>
         </div>
     </header>
 
     <main class="mdl-layout__content mdl-color--grey-100">
-        <div style="text-align: center;">
-            <span id="message-filler"></span>
-            <div id="my_camera" style="width:320px; height:240px;"></div>
+        <!-- Div align in the middle -->
+        <div style="margin-left:auto;margin-right:auto;text-align:center">
+            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;"></div>
             <div id="my_result" style="display: none;"></div>
-            <div class="container"/>
-            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())" onclick="javascript:void(freeze_snap())">
+            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())"
+                    onclick="javascript:void(freeze_snap())">
                 <img src="images/button/camera.png" height="35"/>
             </button>
             <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
                 <img src="images/button/x.png" height="35"/>
             </button>
-            </div>
+            <p>Hello my text is in the middle :-) </p>
+        </div>
     </main>
 </div>
 
@@ -126,48 +117,48 @@
     function unfreeze_snap() {
         Webcam.unfreeze()
     }
-    function freeze_snap(){
+    function freeze_snap() {
         Webcam.freeze()
     }
 
     function requestClarifaiAPI() {
-      console.log('requestClarifaiAPI');
-      var imageData = extractImageBase64('image');
+        console.log('requestClarifaiAPI');
+        var imageData = extractImageBase64('image');
 
-      Clarifai.getTagsByImageBytes(imageData, {
-        'selectClasses': ['food']
-      }).then(function(r) {
-        var obj = r.results[0];
-        if (obj) {
-          var foodRatio = getFoodRatio(obj.result.tag);
-          console.log('foodRatio:', foodRatio);
+        Clarifai.getTagsByImageBytes(imageData, {
+            'selectClasses': ['food']
+        }).then(function (r) {
+            var obj = r.results[0];
+            if (obj) {
+                var foodRatio = getFoodRatio(obj.result.tag);
+                console.log('foodRatio:', foodRatio);
 
-          if (foodRatio >= 0.8) {
-            console.log("got food");
-            Clarifai.getTagsByImageBytes(imageData, {
-              'model': 'food-items-v0.1'
-            }).then(function(r) {
-              console.log('response:', r);
-              showMessage('food found!');
-            }, function(err) {
-              console.log(err);
-              showMessage(err.status_msg);
-            });
-          } else {
-            showMessage('take a better picture!');
-          }
-        } else {
-          showMessage('Clarifai returned nothing :(');
-        }
-      }, function(err) {
-        console.log(err);
-        showMessage(err.status_msg);
-      });
+                if (foodRatio >= 0.8) {
+                    console.log("got food");
+                    Clarifai.getTagsByImageBytes(imageData, {
+                        'model': 'food-items-v0.1'
+                    }).then(function (r) {
+                        console.log('response:', r);
+                        showMessage('food found!');
+                    }, function (err) {
+                        console.log(err);
+                        showMessage(err.status_msg);
+                    });
+                } else {
+                    showMessage('take a better picture!');
+                }
+            } else {
+                showMessage('Clarifai returned nothing :(');
+            }
+        }, function (err) {
+            console.log(err);
+            showMessage(err.status_msg);
+        });
     }
 
     function showMessage(text) {
-      console.log(text);
-      alert(text);
+        console.log(text);
+        alert(text);
     }
 
     function extractImageBase64(id) {
@@ -175,11 +166,11 @@
     }
 
     function getFoodRatio(data) {
-      console.log('getFoodRatio', data);
-      var foodIndex = $.inArray('food', data.classes);
-      if (foodIndex >= 0) {
-        return data.probs[foodIndex];
-      }
+        console.log('getFoodRatio', data);
+        var foodIndex = $.inArray('food', data.classes);
+        if (foodIndex >= 0) {
+            return data.probs[foodIndex];
+        }
     }
 </script>
 
