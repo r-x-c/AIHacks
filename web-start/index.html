@@ -295,9 +295,9 @@
         $('#calciumStat').text(format_r_p(data.nf_calcium_dv || "---"));
         $('#ironStat').text(format_r_p(data.nf_iron_dv || "---"));
         $('#sodiumStat').text((data.nf_serving_weight_grams
-                ? format_r_p(data.nf_sodium / (data.nf_serving_weight_grams * 1000))
+                ? format_r_p(data.nf_sodium / 2400)
                 : "---"));
-        $('#fiberStat').text(data.nf_dietary_fiber + 'g' || "---");
+        $('#fiberStat').text(format_r_p(data.nf_dietary_fiber / 25) || "---");
         $('#nutrition').slideDown();
     }
 
