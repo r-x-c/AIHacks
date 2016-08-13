@@ -207,7 +207,7 @@
         var foodRatio = getRatio('food', tags);
         var healthyRatio = getRatio('healthy', tags);
         var unhealthyRatio = getRatio('unhealthy', tags);
-        var isHealthy = (unhealthyRatio <= .4 && healthyRatio >= .5);
+        var isHealthy = (healthyRatio / unhealthyRatio >= 2);
         console.log('foodRatio:', foodRatio);
 
         // Check if food probability is > threshold, request properties
