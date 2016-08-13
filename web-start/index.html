@@ -73,7 +73,7 @@
                 <img src="images/button/camera.png" height="35"/>
             </button>
 
-            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(unfreeze_snap())"
+            <button style="height:50px;width:320px;display:none;" type="button" onclick="javascript:void(return_to_camera())"
                     id="returnButton">
                 <img src="images/button/reset.png" height="35"/>
             </button>
@@ -99,10 +99,10 @@
                     <td class="tL">Fats: <span id="fatStat"></span></td>
                 </tr>
                 <tr>
-                  <td rowspan="2">
-                      Serving Size:
-                      <span id="servingStat"></span>
-                  </td>
+                    <td rowspan="2">
+                        Serving Size:
+                        <span id="servingStat"></span>
+                    </td>
                     <td class="tL">Protein: <span id="proteinStat"></span></td>
                 </tr>
                 <tr>
@@ -110,24 +110,24 @@
                 </tr>
 
                 <tr>
-                  <td class="tR">Vitamin A</td>
-                  <td colspan="2" class="tL" id="vitAStat"></td>
+                    <td class="tR">Vitamin A</td>
+                    <td colspan="2" class="tL" id="vitAStat"></td>
                 </tr>
                 <tr>
-                  <td class="tR">Vitamin C</td>
-                  <td colspan="2" class="tL" id="vitCStat"></td>
+                    <td class="tR">Vitamin C</td>
+                    <td colspan="2" class="tL" id="vitCStat"></td>
                 </tr>
                 <tr>
-                  <td class="tR">Calcium</td>
-                  <td colspan="2" class="tL" id="calciumStat"></td>
+                    <td class="tR">Calcium</td>
+                    <td colspan="2" class="tL" id="calciumStat"></td>
                 </tr>
                 <tr>
-                  <td class="tR">Iron</td>
-                  <td colspan="2" class="tL" id="ironStat"></td>
+                    <td class="tR">Iron</td>
+                    <td colspan="2" class="tL" id="ironStat"></td>
                 </tr>
                 <tr>
-                  <td class="tR">Sodium</td>
-                  <td colspan="2" class="tL" id="sodiumStat"></td>
+                    <td class="tR">Sodium</td>
+                    <td colspan="2" class="tL" id="sodiumStat"></td>
                 </tr>
             </table>
         </div>
@@ -162,38 +162,42 @@
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
-  var deviceIndex = 0;
-  Webcam.attach('#my_camera');
-  if (Webcam.numDevices() > 1) {
-    $('#switchDeviceButton').show();
-  }
-  function take_snapshot() {
-      Webcam.snap(function (data_uri) {
-          document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
+    var deviceIndex = 0;
+    Webcam.attach('#my_camera');
+    if (Webcam.numDevices() > 1) {
+        $('#switchDeviceButton').show();
+    }
+    function take_snapshot() {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
 
-          requestClarifaiAPI();
-      });
-      freeze_snap();
-      $('#snapButton').hide();
-      $('#returnButton').show();
-  }
-  function unfreeze_snap() {
-      Webcam.unfreeze()
-      $('#returnButton').hide();
+            requestClarifaiAPI();
+        });
+        freeze_snap();
+        $('#snapButton').hide();
+        $('#message').slideUp();
+        $('#returnButton').show();
+    }
+    function return_to_camera() {
+      unfreeze_snap();
       $('#message').slideUp();
-      $('#nutrition').slideUp();
-      $('#snapButton').show();
-  }
-  function freeze_snap() {
-      Webcam.freeze()
-  }
-  function switch_device() {
-    deviceIndex = ++deviceIndex % Webcam.numDevices();
-    Webcam.setDeviceIndex(deviceIndex);
-  }
+    }
+    function unfreeze_snap() {
+        Webcam.unfreeze()
+        $('#returnButton').hide();
+        $('#nutrition').slideUp();
+        $('#snapButton').show();
+    }
+    function freeze_snap() {
+        Webcam.freeze()
+    }
+    function switch_device() {
+        deviceIndex = ++deviceIndex % Webcam.numDevices();
+        Webcam.setDeviceIndex(deviceIndex);
+    }
 
-  function requestClarifaiAPI() {
-    console.log('requestClarifaiAPI');
+    function requestClarifaiAPI() {
+        console.log('requestClarifaiAPI');
 
     // Get image data from camera capture, extract bytes and sent to clarify
     var imageData = extractImageBase64('image');
@@ -210,93 +214,100 @@
         var isHealthy = (healthyRatio / unhealthyRatio >= 2);
         console.log('foodRatio:', foodRatio);
 
-        // Check if food probability is > threshold, request properties
-        if (foodRatio >= 0.8) {
-          Clarifai.getTagsByImageBytes(imageData, {
-            'model': 'food-items-v0.1'
-          }).then(function(r) {
-            showMessage('Item identified!');
-            console.log('properties:', r.results[0].result.tag);
-            requestNutritionixAPI(r.results[0].result.tag, isHealthy);
-          }, function(err) {
+                // Check if food probability is > threshold, request properties
+                if (foodRatio >= 0.8) {
+                    Clarifai.getTagsByImageBytes(imageData, {
+                        'model': 'food-items-v0.1'
+                    }).then(function (r) {
+                        showMessage('Item identified!');
+                        console.log('properties:', r.results[0].result.tag);
+                        requestNutritionixAPI(r.results[0].result.tag, isHealthy);
+                    }, function (err) {
+                        console.log(err);
+                        showMessage(err.status_msg);
+                    });
+                } else {
+                    showMessage('No food detected. Please retake picture!');
+                    unfreeze_snap();
+                }
+            } else {
+                showMessage('Clarifai returned nothing :(');
+                unfreeze_snap();
+            }
+        }, function (err) {
             console.log(err);
             showMessage(err.status_msg);
-          });
-        } else {
-          showMessage('No food detected. Please retake picture!');
-        }
-      } else {
-        showMessage('Clarifai returned nothing :(');
-      }
-    }, function(err) {
-      console.log(err);
-      showMessage(err.status_msg);
-    });
-  }
-
-  function requestNutritionixAPI(params, isHealthy) {
-    console.log('requestNutritionixAPI');
-    var url = "https://api.nutritionix.com/v1_1/search/"
-      + encodeURIComponent(params.classes[0]) + "?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
-    console.log('request URL:', url);
-
-    // Send request to Nutritionix to get ID, then request again for properties
-    $.get(url, function (data) {
-      console.log('response:', data);
-      var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
-      $.get(url_id, function (data_id) {
-        data_id.healthiness = isHealthy;
-        data_id.item_name = params.classes[0];
-        showNutritionResults(data_id);
-      });
-    });
-  }
-
-  function showNutritionResults(data) {
-    console.log('showNutritionResults:', data);
-
-    $('#itemName').text(data.item_name);
-    $('#healthiness').text((data.healthiness ? "Healthy" : "Unhealthy"));
-    $('#healthiness').addClass((data.healthiness ? "healthy" : "unhealthy"));
-
-    $('#calStat').text((data.nf_calories || "---"));
-    $('#servingStat').text((data.nf_serving_size_qty || "---"));
-    $('#fatStat').text((data.nf_serving_weight_grams
-      ? (data.nf_total_fat / data.nf_serving_weight_grams * 100).toFixed(2)
-      : "---"));
-    $('#proteinStat').text((data.nf_serving_weight_grams
-      ? (data.nf_protein / data.nf_serving_weight_grams * 100).toFixed(2)
-      : "---"));
-    $('#carbStat').text((data.nf_serving_weight_grams
-      ? (data.nf_total_carbohydrate / data.nf_serving_weight_grams * 100).toFixed(2)
-      : "---"));
-
-    $('#vitAStat').text((data.nf_vitamin_a_dv || "---"));
-    $('#vitCStat').text((data.nf_vitamin_c_dv || "---"));
-    $('#calciumStat').text((data.nf_calcium_dv || "---"));
-    $('#ironStat').text((data.nf_iron_dv || "---"));
-    $('#sodiumStat').text((data.nf_serving_weight_grams
-      ? (data.nf_sodium / (data.nf_serving_weight_grams * 1000) * 100).toFixed(2)
-      : "---"));
-
-    $('#nutrition').slideDown();
-  }
-
-  function showMessage(text) {
-    console.log(text);
-    $('#message').html('').append($(document.createElement('p')).text(text)).slideDown();
-  }
-
-  function extractImageBase64(id) {
-    return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
-  }
-
-  function getRatio(label, tags) {
-    var index = $.inArray(label, tags.classes);
-    if (index >= 0) {
-      return tags.probs[index];
+        });
     }
-  }
+
+    function requestNutritionixAPI(params, isHealthy) {
+        console.log('requestNutritionixAPI');
+        var url = "https://api.nutritionix.com/v1_1/search/"
+                + encodeURIComponent(params.classes[0]) + "?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+        console.log('request URL:', url);
+
+        // Send request to Nutritionix to get ID, then request again for properties
+        $.get(url, function (data) {
+            console.log('response:', data);
+            var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+            $.get(url_id, function (data_id) {
+                data_id.healthiness = isHealthy;
+                data_id.item_name = params.classes[0];
+                showNutritionResults(data_id);
+            });
+        });
+    }
+
+    //convert to percentage, round, add % sign
+    //input: int/float
+    function format_r_p(param) {
+        return (param * 100).toFixed(2) + '%'
+    }
+
+    function showNutritionResults(data) {
+        console.log('showNutritionResults:', data);
+
+        $('#itemName').text(data.item_name);
+        $('#healthiness').text((data.healthiness ? "Healthy" : "Unhealthy"));
+        $('#healthiness').addClass((data.healthiness ? "healthy" : "unhealthy"));
+
+        $('#calStat').text((data.nf_calories || "---"));
+        $('#servingStat').text((data.nf_serving_size_qty || "---"));
+        $('#fatStat').text((data.nf_serving_weight_grams
+                ? format_r_p(data.nf_total_fat / data.nf_serving_weight_grams)
+                : "---"));
+        $('#proteinStat').text((data.nf_serving_weight_grams
+                ? format_r_p(data.nf_protein / data.nf_serving_weight_grams)
+                : "---"));
+        $('#carbStat').text((data.nf_serving_weight_grams
+                ? format_r_p(data.nf_total_carbohydrate / data.nf_serving_weight_grams)
+                : "---"));
+        $('#vitAStat').text((data.nf_vitamin_a_dv || "---"));
+        $('#vitCStat').text((data.nf_vitamin_c_dv || "---"));
+        $('#calciumStat').text((data.nf_calcium_dv || "---"));
+        $('#ironStat').text((data.nf_iron_dv || "---"));
+        $('#sodiumStat').text((data.nf_serving_weight_grams
+                ? format_r_p(data.nf_sodium / (data.nf_serving_weight_grams * 1000))
+                : "---"));
+
+        $('#nutrition').slideDown();
+    }
+
+    function showMessage(text) {
+        console.log(text);
+        $('#message').html('').append($(document.createElement('p')).text(text)).slideDown();
+    }
+
+    function extractImageBase64(id) {
+        return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
+    }
+
+    function getRatio(label, tags) {
+        var index = $.inArray(label, tags.classes);
+        if (index >= 0) {
+            return tags.probs[index];
+        }
+    }
 </script>
 
 <script src="scripts/main.js"></script>
