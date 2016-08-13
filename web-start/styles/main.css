@@ -201,7 +201,7 @@ main, #messages-card {
 
 #message {
   display: none;
-  margin: 8px;
+  margin: 8px auto;
   padding: 8px;
   width: 320px;
   border: #660;
@@ -216,8 +216,16 @@ main, #messages-card {
 }
 
 #nutrition {
-  display: none;
-  margin: 8px;
+  margin: 8px auto;
+  width: 90%;
+  padding: 8px;
+  font-weight: bold;
+  background: #fff;
+  color: #222;
+  font-size: 9pt;
+  vertical-align: middle;
+}
+#nutrition #healthiness {
   padding: 8px;
   border: #262;
   background: #cFc;
