@@ -104,19 +104,43 @@
     };
     firebase.initializeApp(config);
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
     Webcam.attach('#my_camera');
     function take_snapshot() {
-        Webcam.snap(function (data_uri) {
-            document.getElementById('my_result').innerHTML = '<img src="' + data_uri + '"/>';
-        });
+      Webcam.snap(function (data_uri) {
+        document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
 
         requestClarifaiAPI();
+      });
+    }
+    
+    function requestClarifaiAPI()
+    {
+      console.log('requestClarifaiAPI');
+      var imageData = extractImageBase64('image');
+      console.log('imageData', imageData);
+
+      $.get("https://api.clarifai.com/v1/tag/", {
+        'inputs': [
+          {
+            'image': {
+              'base64': imageData
+            }
+          }
+        ]
+      }, function (data, status) {
+        console.log(status, data);
+      });
+    }
+
+    function extractImageBase64(id)
+    {
+      return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
     }
 </script>
-
 
 <script src="scripts/main.js"></script>
 </body>
