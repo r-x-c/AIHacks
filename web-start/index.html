@@ -78,12 +78,15 @@
             <div id="my_camera" style="width:320px; height:240px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
-            <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
+              <button style="height:50px;width:50px" type="button" onclick="javascript:void(take_snapshot())">
                 <img src="images/button/camera.png" height="35"/>
-            </button>
-            <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
+              </button>
+              <button style="height:50px;width:50px" type="button" onclick="javascript:void(unfreeze_snap())">
                 <img src="images/button/x.png" height="35"/>
-            </button>
+              </button>
+              <button style="height:50px;width:50px" type="button" onclick="javascript:void(switch_device())" id="switchDeviceButton">
+                <img src="images/button/switchDeviceIcon.png" height="35"/>
+              </button>
             </div>
     </main>
 </div>
@@ -115,69 +118,77 @@
 
 <script src="third_party/webcamjs/webcam.js"></script>
 <script language="JavaScript">
-    Webcam.attach('#my_camera');
-    function take_snapshot() {
-        Webcam.snap(function (data_uri) {
-            document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
+  var deviceIndex = 0;
+  Webcam.attach('#my_camera');
+  if (Webcam.numDevices() <= 1) {
+    $('#switchDeviceButton').hide();
+  }
+  function take_snapshot() {
+    Webcam.snap(function (data_uri) {
+      document.getElementById('my_result').innerHTML = '<img id="image" src="' + data_uri + '"/>';
+      
+      requestClarifaiAPI();
+    });
+  }
+  function unfreeze_snap() {
+    Webcam.unfreeze()
+  }
+  function switch_device() {
+    deviceIndex = ++deviceIndex % Webcam.numDevices();
+    Webcam.setDevice(deviceIndex);
+  }
 
-            requestClarifaiAPI();
-        });
-    }
-    function unfreeze_snap() {
-        Webcam.unfreeze()
-    }
+  function requestClarifaiAPI() {
+    console.log('requestClarifaiAPI');
+    var imageData = extractImageBase64('image');
 
-    function requestClarifaiAPI() {
-      console.log('requestClarifaiAPI');
-      var imageData = extractImageBase64('image');
+    Clarifai.getTagsByImageBytes(imageData, {
+      'selectClasses': ['food']
+    }).then(function(r) {
+      var obj = r.results[0];
+      if (obj) {
+        var foodRatio = getFoodRatio(obj.result.tag);
+        console.log('foodRatio:', foodRatio);
 
-      Clarifai.getTagsByImageBytes(imageData, {
-        'selectClasses': ['food']
-      }).then(function(r) {
-        var obj = r.results[0];
-        if (obj) {
-          var foodRatio = getFoodRatio(obj.result.tag);
-          console.log('foodRatio:', foodRatio);
-
-          if (foodRatio >= 0.8) {
-            console.log("got food");
-            Clarifai.getTagsByImageBytes(imageData, {
-              'model': 'food-items-v0.1'
-            }).then(function(r) {
-              console.log('response:', r);
-              showMessage('food found!');
-            }, function(err) {
-              console.log(err);
-              showMessage(err.status_msg);
-            });
-          } else {
-            showMessage('take a better picture!');
-          }
+        if (foodRatio >= 0.8) {
+          console.log("got food");
+          Clarifai.getTagsByImageBytes(imageData, {
+            'model': 'food-items-v0.1'
+          }).then(function(r) {
+            console.log('response:', r);
+            showMessage('food found!');
+          }, function(err) {
+            console.log(err);
+            showMessage(err.status_msg);
+          });
         } else {
-          showMessage('Clarifai returned nothing :(');
+          showMessage('take a better picture!');
         }
-      }, function(err) {
-        console.log(err);
-        showMessage(err.status_msg);
-      });
-    }
-
-    function showMessage(text) {
-      console.log(text);
-      alert(text);
-    }
-
-    function extractImageBase64(id) {
-        return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
-    }
-
-    function getFoodRatio(data) {
-      console.log('getFoodRatio', data);
-      var foodIndex = $.inArray('food', data.classes);
-      if (foodIndex >= 0) {
-        return data.probs[foodIndex];
+      } else {
+        showMessage('Clarifai returned nothing :(');
       }
+    }, function(err) {
+      console.log(err);
+      showMessage(err.status_msg);
+    });
+  }
+
+  function showMessage(text) {
+    console.log(text);
+    alert(text);
+  }
+
+  function extractImageBase64(id) {
+    return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
+  }
+
+  function getFoodRatio(data) {
+    console.log('getFoodRatio', data);
+    var foodIndex = $.inArray('food', data.classes);
+    if (foodIndex >= 0) {
+      return data.probs[foodIndex];
     }
+  }
 </script>
 
 <script src="scripts/main.js"></script>
