@@ -84,9 +84,11 @@ var Webcam = {
 		} : null);
 
 		// Get rear-facing camera for phones
+		console.log('_devices:', _devices);
 		if (!navigator.mediaDevices.enumerateDevices) {
 			console.log("enumerateDevices() not supported.");
 		} else {
+			console.log('enumerating devices');
 			navigator.mediaDevices.enumerateDevices().then(function(devices) {
 				var videoDevices = [];
 				devices.forEach(function(device) {
@@ -221,24 +223,32 @@ var Webcam = {
 				};
 			}
 			if (deviceID) {
+				console.log('deviceID exists');
 				this.params.constraints.optional = [{sourceId: deviceID}];
 			} else {
+				console.log('_devices:', _devices);
 				if (!_devices) {
+					console.log('no devices tracked');
+					var thisParams = this.params;
 					navigator.mediaDevices.enumerateDevices().then(function(devices) {
 						var videoDevices = [];
 						devices.forEach(function(device) {
 							if (device.kind == "videoinput") {
 								videoDevices.push(device);
-								alert(device.kind + ": " + device.label + " id = " + device.deviceId);
+								// alert(device.kind + ": " + device.label + " id = " + device.deviceId);
 							}
 							_devices = videoDevices;
+							thisParams.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
+							console.log('_devices:', _devices);
 						});
 					})
 					.catch(function(err) {
-						console.log(err.name + ": " + error.message);
+						console.log(err.name + ": " + err.message);
 					});
+				} else {
+					this.params.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
+					console.log('_devices:', _devices);
 				}
-				this.params.constraints.optional = [{sourceId: _devices[_devices.length-1]}];
 			}
 			this.mediaDevices.getUserMedia({
 				"audio": false,
