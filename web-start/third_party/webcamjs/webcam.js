@@ -83,27 +83,6 @@ var Webcam = {
 				}
 		} : null);
 
-		// Get rear-facing camera for phones
-		console.log('_devices:', _devices);
-		if (!navigator.mediaDevices.enumerateDevices) {
-			console.log("enumerateDevices() not supported.");
-		} else {
-			console.log('enumerating devices');
-			navigator.mediaDevices.enumerateDevices().then(function(devices) {
-				var videoDevices = [];
-				devices.forEach(function(device) {
-					console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-					if (device.kind == "videoinput") {
-						videoDevices.push(device);
-					}
-					_devices = videoDevices;
-				});
-			})
-			.catch(function(err) {
-				console.log(err.name + ": " + error.message);
-			});
-		}
-
 		window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 		this.userMedia = this.userMedia && !!this.mediaDevices && !!window.URL;
 
@@ -188,6 +167,7 @@ var Webcam = {
 		var scaleY = this.params.height / this.params.dest_height;
 
 		if (this.userMedia) {
+
 			// setup webcam video container
 			var video = document.createElement('video');
 			video.setAttribute('autoplay', 'autoplay');
@@ -222,59 +202,62 @@ var Webcam = {
 					}
 				};
 			}
-			if (deviceID) {
-				console.log('deviceID exists');
-				this.params.constraints.optional = [{sourceId: deviceID}];
-			} else {
-				console.log('_devices:', _devices);
-				if (!_devices) {
-					console.log('no devices tracked');
-					var thisParams = this.params;
-					navigator.mediaDevices.enumerateDevices().then(function(devices) {
-						var videoDevices = [];
-						devices.forEach(function(device) {
-							if (device.kind == "videoinput") {
-								videoDevices.push(device);
-								// alert(device.kind + ": " + device.label + " id = " + device.deviceId);
-							}
-							_devices = videoDevices;
-							thisParams.constraints.optional = [{sourceId: _devices[_devices.length-1].deviceId}];
-							console.log('_devices:', _devices);
-						});
-					})
-					.catch(function(err) {
-						console.log(err.name + ": " + err.message);
-					});
-				} else {
-					this.params.constraints.optional = [{sourceId: _devices[_devices.length-1].deviceId}];
-					console.log('_devices:', _devices);
-				}
-			}
 
-			this.mediaDevices.getUserMedia({
-				"audio": false,
-				"video": this.params.constraints
-			}).then( function(stream) {
-				// got access, attach stream to video
-				video.onloadedmetadata = function(e) {
-					self.stream = stream;
-					self.loaded = true;
-					self.live = true;
-					self.dispatch('load');
-					self.dispatch('live');
-					self.flip();
-				};
-				video.src = window.URL.createObjectURL( stream ) || stream;
+			// Get the enumerateDevices
+			var thisParams = this.params;
+			var thisMediaDevices = this.mediaDevices;
+			navigator.mediaDevices.enumerateDevices().then(function(devices) {
+				console.log('deviced enumerated!!!!!');
+				var videoDevices = [];
+				devices.forEach(function(device) {
+					console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+					if (device.kind == "videoinput") {
+						videoDevices.push(device);
+					}
+					_devices = videoDevices;
+					console.log('_devices:', _devices);
+				});
+				if (deviceID) {
+					console.log('deviceID exists');
+					thisParams.constraints.optional = [{sourceId: deviceID}];
+				} else {
+					console.log('_devices:', _devices);
+					if (_devices) {
+						thisParams.constraints.optional = [{sourceId: _devices[_devices.length-1].deviceId}];
+						console.log('_devices:', _devices);
+					} else {
+						alert("no input devices!");
+					}
+				}
+
+				thisMediaDevices.getUserMedia({
+					"audio": false,
+					"video": thisParams.constraints
+				}).then( function(stream) {
+					// got access, attach stream to video
+					video.onloadedmetadata = function(e) {
+						self.stream = stream;
+						self.loaded = true;
+						self.live = true;
+						self.dispatch('load');
+						self.dispatch('live');
+						self.flip();
+					};
+					video.src = window.URL.createObjectURL( stream ) || stream;
+				})
+				.catch( function(err) {
+					// JH 2016-07-31 Instead of dispatching error, now falling back to Flash if userMedia fails (thx @john2014)
+					// JH 2016-08-07 But only if flash is actually installed -- if not, dispatch error here and now.
+					if (self.detectFlash()) {
+						setTimeout( function() { self.params.force_flash = 1; self.attach(elem); }, 1 );
+					}
+					else {
+						self.dispatch('error', err);
+					}
+				});
 			})
-			.catch( function(err) {
-				// JH 2016-07-31 Instead of dispatching error, now falling back to Flash if userMedia fails (thx @john2014)
-				// JH 2016-08-07 But only if flash is actually installed -- if not, dispatch error here and now.
-				if (self.detectFlash()) {
-					setTimeout( function() { self.params.force_flash = 1; self.attach(elem); }, 1 );
-				}
-				else {
-					self.dispatch('error', err);
-				}
+			.catch(function(err) {
+				console.log(err.name + ": " + err.message);
 			});
 		}
 		else {
