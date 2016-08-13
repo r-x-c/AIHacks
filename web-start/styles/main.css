@@ -255,3 +255,6 @@ main, #messages-card {
 #statTable .tR {
   text-align: right;
 }
+#statTable .tL {
+  text-align: left;
+}
