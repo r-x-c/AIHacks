@@ -128,19 +128,49 @@
     }
 
     function requestClarifaiAPI() {
-        console.log('requestClarifaiAPI');
-        var imageData = extractImageBase64('image');
+      console.log('requestClarifaiAPI');
+      var imageData = extractImageBase64('image');
 
-        console.log('calling clarifai with image data:', imageData);
-        Clarifai.getTagsByImageBytes(imageData).then(function (r) {
-            console.log('response', r);
-        }, function (err) {
-            console.log(err);
-        });
+      Clarifai.getTagsByImageBytes(imageData, {
+        'selectClasses': ['food']
+      }).then(function(r) {
+        var obj = r.results[0];
+        if (obj) {
+          var foodRatio = getFoodRatio(obj.result.tag);
+          console.log('foodRatio:', foodRatio);
+
+          if (foodRatio >= 0.8) {
+            console.log("got food");
+            Clarifai.getTagsByImageBytes(imageData, {
+              'model': 'food-items-v0.1'
+            }).then(function(r) {
+              console.log('response:', r);
+            }, function(err) {
+              console.log(err);
+              alert(err.status_msg);
+            });
+          } else {
+            alert('take a better picture!');
+          }
+        } else {
+          alert('Clarifai returned nothing :(');
+        }
+      }, function(err) {
+        console.log(err);
+        alert(err.status_msg);
+      });
     }
 
     function extractImageBase64(id) {
         return document.getElementById(id).src.replace(/^data:image\/(.*);base64,/, '');
+    }
+
+    function getFoodRatio(data) {
+      console.log('getFoodRatio', data);
+      var foodIndex = $.inArray('food', data.classes);
+      if (foodIndex >= 0) {
+        return data.classes[foodIndex];
+      }
     }
 </script>
 
