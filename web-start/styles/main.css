@@ -203,8 +203,9 @@ main, #messages-card {
   display: none;
   margin: 8px;
   padding: 8px;
-  border: #AAAA66;
-  background: #EEFFBB;
+  width: 320px;
+  border: #660;
+  background: #EFB;
   font-weight: bold;
   color: #222;
   font-size: 9pt;
@@ -212,4 +213,16 @@ main, #messages-card {
 }
 #message p {
   margin: 0;
+}
+
+#nutrition {
+  display: none;
+  margin: 8px;
+  padding: 8px;
+  border: #262;
+  background: #cFc;
+  font-weight: bold;
+  color: #222;
+  font-size: 9pt;
+  vertical-align: middle;
 }

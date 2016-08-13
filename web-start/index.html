@@ -65,7 +65,7 @@
     <main class="mdl-layout__content mdl-color--grey-100">
         <!-- Div align in the middle -->
         <div style="margin-left:auto;margin-right:auto;text-align:center">
-            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;margin-bottom:16px;"></div>
+            <div id="my_camera" style="width:320px; height:240px;margin-left:auto;margin-right:auto;text-align:center;margin-top:24px;"></div>
             <div id="my_result" style="display: none;"></div>
             <div class="container"/>
               <button style="height:50px;width:320px" type="button" onclick="javascript:void(take_snapshot())" id="snapButton">
@@ -81,7 +81,7 @@
               </button>
             </div>
             <div id="message"></div>
-
+            <div id="nutrition"></div>
         </div>
     </main>
 </div>
@@ -159,14 +159,14 @@
             'model': 'food-items-v0.1'
           }).then(function(r) {
             console.log('response:', r);
-            showMessage('food found!');
+            showMessage('Food found!');
             requestNutritionixAPI(r.results[0].result.tag);
           }, function(err) {
             console.log(err);
             showMessage(err.status_msg);
           });
         } else {
-          showMessage('take a better picture!');
+          showMessage('No food detected. Please retake picture!');
         }
       } else {
         showMessage('Clarifai returned nothing :(');
@@ -179,6 +179,10 @@
 
   function requestNutritionixAPI(params) {
     console.log('requestNutritionixAPI', params);
+  }
+
+  function showNutritionResults(data) {
+
   }
 
   function showMessage(text) {
