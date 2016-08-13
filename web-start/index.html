@@ -249,15 +249,20 @@
     }
 
     function requestNutritionixAPI(params, isHealthy) {
+        var NUTR_APP_ID = "ca6c6eb1"
+        var NUTR_KEY = "52eecccdffcc83505211eb58051c8286"
+//        var NUTR_APP_ID = "2220b795"
+//        var NUTR_KEY = "30bbe587eea1914c25306887f982de34"
+
         console.log('requestNutritionixAPI');
         var url = "https://api.nutritionix.com/v1_1/search/"
-                + encodeURIComponent(params.classes[0]) + "?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+                + encodeURIComponent(params.classes[0]) + "?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=" + NUTR_APP_ID + "&appKey=" + NUTR_KEY
         console.log('request URL:', url);
 
         // Send request to Nutritionix to get ID, then request again for properties
         $.get(url, function (data) {
             console.log('response:', data);
-            var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=2220b795&appKey=30bbe587eea1914c25306887f982de34"
+            var url_id = "https://api.nutritionix.com/v1_1/item?id=" + data['hits'][0]['_id'] + "&appId=" + NUTR_APP_ID + "&appKey=" + NUTR_KEY
             $.get(url_id, function (data_id) {
                 data_id.healthiness = isHealthy;
                 data_id.item_name = params.classes[0];
@@ -271,6 +276,10 @@
     function format_r_p(param) {
         return '(' + param.toFixed(2) + '% DV)'
     }
+    function format_macros(param) {
+        return param.toFixed(2) + 'g'
+    }
+
 
     function showNutritionResults(data) {
         console.log('showNutritionResults:', data);
@@ -282,13 +291,13 @@
         $('#calStat').text((data.nf_calories || "---"));
         $('#servingStat').text((data.nf_serving_size_qty || "---"));
         $('#fatStat').text((data.nf_serving_weight_grams
-                ? format_r_p(100 * data.nf_total_fat / data.nf_serving_weight_grams)
+                ? format_macros(100 * data.nf_total_fat / data.nf_serving_weight_grams)
                 : "---"));
         $('#proteinStat').text((data.nf_serving_weight_grams
-                ? format_r_p(100 * data.nf_protein / data.nf_serving_weight_grams)
+                ? format_macros(100 * data.nf_protein / data.nf_serving_weight_grams)
                 : "---"));
         $('#carbStat').text((data.nf_serving_weight_grams
-                ? format_r_p(100 * data.nf_total_carbohydrate / data.nf_serving_weight_grams)
+                ? format_macros(100 * data.nf_total_carbohydrate / data.nf_serving_weight_grams)
                 : "---"));
         $('#vitAStat').text(format_r_p(data.nf_vitamin_a_dv) || "---");
         $('#vitCStat').text(format_r_p(data.nf_vitamin_c_dv) || "---");
