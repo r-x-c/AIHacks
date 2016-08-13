@@ -132,7 +132,7 @@
   }
   function switch_device() {
     deviceIndex = ++deviceIndex % Webcam.numDevices();
-    Webcam.setDevice(deviceIndex);
+    Webcam.setDeviceIndex(deviceIndex);
   }
 
   function requestClarifaiAPI() {

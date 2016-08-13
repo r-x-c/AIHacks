@@ -130,7 +130,10 @@ var Webcam = {
 		return _devices.slice();
 	},
 
-	setDevice: function(index) {
+	setDeviceIndex: function(index) {
+		var deviceID = _devices[index].deviceId;
+		this.params.constraints.optional = [{sourceId: deviceID}];
+
 		// navigator.getUserMedia(constraints);
 		this.mediaDevices.getUserMedia({
 			"audio": false,
